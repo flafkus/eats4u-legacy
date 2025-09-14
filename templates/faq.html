@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Frequently Asked Questions - eats4u</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://eats4u.net/faq">
+  <meta property="og:title" content="eats4u - FAQ">
+  <meta property="og:description" content="Frequently Asked Questions about eats4u discount codes">
+  <meta property="theme-color" content="#8a6bff">
+  {% include 'partials/vercel_analytics.html' %}
+  <style>
+    .faq-container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+    
+    .faq-title {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #ffffff;
+    }
+    
+    .faq-item {
+      margin-bottom: 25px;
+      background-color: #222222;
+      border-radius: 8px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .faq-question {
+      padding: 15px 20px;
+      background-color: #2a2a2a;
+      color: #ffffff;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .faq-question:hover {
+      background-color: #333333;
+    }
+    
+    .faq-question::after {
+      content: "+";
+      font-size: 20px;
+      transition: transform 0.3s ease;
+    }
+    
+    .faq-item.active .faq-question::after {
+      content: "−";
+    }
+    
+    .faq-answer {
+      padding: 0 20px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+      color: #cccccc;
+    }
+    
+    .faq-item.active .faq-answer {
+      padding: 15px 20px;
+      max-height: 1000px;
+    }
+    
+    .category-title {
+      margin: 40px 0 20px 0;
+      color: #8a6bff;
+      font-weight: 600;
+      border-bottom: 1px solid #444;
+      padding-bottom: 8px;
+    }
+    
+    .support-link {
+      color: #8a6bff;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+    
+    .support-link:hover {
+      color: #7559e8;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <a href="/" class="logo">eats4u</a>
+      <nav>
+        <ul>
+          <li><a href="/">Products</a></li>
+          <li><a href="/faq">FAQ</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  
+  <section class="announcement-banner">
+    <div class="container">
+      <span class="announcement-emoji">📢</span>
+      <p>Please message our <a href="https://t.me/eats4u_bot" class="support-link" target="_blank">support bot</a> if you have any issues with codes or queries!</p>
+      <p>Also join our <a href="https://t.me/eats4uu" class="telegram-link" target="_blank">Telegram channel</a> for announcements and discount codes!</p>
+    </div>
+  </section>
+
+  <div class="faq-container">
+    <h1 class="faq-title">Frequently Asked Questions</h1>
+    
+    <h2 class="category-title">General Questions</h2>
+    
+    <div class="faq-item">
+      <div class="faq-question">What is eats4u?</div>
+      <div class="faq-answer">
+        <p>eats4u is a platform that provides discount codes for various food delivery services. We offer legitimate codes that can help you save money on your favorite food deliveries.</p>
+      </div>
+    </div>
+    
+    <div class="faq-item">
+      <div class="faq-question">How do I use your discount codes?</div>
+      <div class="faq-answer">
+        <p>Using our discount codes is simple!</p>
+        <p>All you need to do is just follow the guide that is on the product page, and all your codes will work!</p>
+      </div>
+    </div>
+    
+    <div class="faq-item">
+      <div class="faq-question">Are your codes legitimate?</div>
+      <div class="faq-answer">
+        <p>Yes, all our codes are legitimate and work on the respective platforms. We provide a 3-hour warranty on all codes purchased from us. If you encounter any issues, please contact our support immediately.</p>
+      </div>
+    </div>
+    
+    <h2 class="category-title">Orders & Payment</h2>
+    
+    <div class="faq-item">
+      <div class="faq-question">What payment methods do you accept?</div>
+      <div class="faq-answer">
+        <p>We accept multiple payment methods:</p>
+        <ul>
+          <li>Credit/Debit Cards</li>
+          <li>PayPal</li>
+          <li>Crypto</li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="faq-item">
+      <div class="faq-question">I paid but didn't receive my code, what should I do?</div>
+      <div class="faq-answer">
+        <p>If you've completed your payment but haven't received your code:</p>
+        <ol>
+          <li>Check your email inbox (including spam/junk folders)</li>
+          <li>Look at the order success page where your code should be displayed</li>
+          <li>Wait a few minutes as sometimes there can be slight delays in processing</li>
+          <li>Contact our <a href="https://t.me/eats4u_bot" class="support-link" target="_blank">support bot</a> with your order ID</li>
+        </ol>
+      </div>
+    </div>
+    
+    <div class="faq-item">
+      <div class="faq-question">Can I use promo codes on your website?</div>
+      <div class="faq-answer">
+        <p>Yes! We occasionally offer promo codes that give you additional discounts on our website. These may be shared through our <a href="https://t.me/eats4uu" class="telegram-link" target="_blank">Telegram channel</a>. During checkout, you'll see an option to enter a promo code if you have one.</p>
+      </div>
+    </div>
+    
+    <h2 class="category-title">Code Usage</h2>
+    
+    <div class="faq-item">
+      <div class="faq-question">My code isn't working, what should I do?</div>
+      <div class="faq-answer">
+        <p>If you're experiencing issues with a code:</p>
+        <ul>
+          <li>Make sure you've met any requirements with the codes</li>
+          <li>Ensure you're entering the code exactly as provided (codes are case-sensitive)</li>
+          <li>Check that you're eligible to use the code</li>
+          <li>Make sure you have checked the issues and fixes section on the product page</li>
+          <li>If you're still having issues, contact our <a href="https://t.me/eats4u_bot" class="support-link" target="_blank">support bot</a> within 3 hours of purchase for assistance</li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="faq-item">
+      <div class="faq-question">How long are the codes valid for?</div>
+      <div class="faq-answer">
+        <p>The expiration date for each code is listed on the product page - we recommend using the codes soon after purchase for the best experience.</p>
+      </div>
+    </div>
+    
+    <h2 class="category-title">Support</h2>
+    
+    <div class="faq-item">
+      <div class="faq-question">How can I contact support?</div>
+      <div class="faq-answer">
+        <p>The fastest way to get assistance is through our <a href="https://t.me/eats4u_bot" class="support-link" target="_blank">Telegram support bot</a>. Our support team is available to help you with any issues you may have with your purchase.</p>
+      </div>
+    </div>
+    
+    <div class="faq-item">
+      <div class="faq-question">Do you offer refunds?</div>
+      <div class="faq-answer">
+        <p>We offer a 3-hour warranty on all codes. If your code doesn't work and our support team can't provide a solution or replacement within this timeframe, you'll be eligible for a refund. Please contact our support immediately if you encounter any issues.</p>
+        <p>Outside of the warranty, we offer no refunds at all.</p>
+      </div>
+    </div>
+    
+    <div class="faq-item">
+      <div class="faq-question">Where can I get updates and announcements?</div>
+      <div class="faq-answer">
+        <p>Join our <a href="https://t.me/eats4uu" class="telegram-link" target="_blank">Telegram channel</a> for the latest announcements, special offers, and occasional free codes!</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // JavaScript to handle FAQ accordion functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      const faqItems = document.querySelectorAll('.faq-item');
+      
+      faqItems.forEach(item => {
+        const question = item.querySelector('.faq-question');
+        
+        question.addEventListener('click', () => {
+          // Toggle active class on the clicked item
+          item.classList.toggle('active');
+          
+          // Optional: Close other open items
+          faqItems.forEach(otherItem => {
+            if (otherItem !== item && otherItem.classList.contains('active')) {
+              otherItem.classList.remove('active');
+            }
+          });
+        });
+      });
+    });
+  </script>
+</body>
+</html>

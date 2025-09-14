@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Failed - eats4u</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    .failed-container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 30px;
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      color: #000000;
+    }
+    
+    .failed-icon {
+      font-size: 64px;
+      color: #f44336;
+      margin-bottom: 20px;
+    }
+    
+    .failed-title {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    
+    .return-link {
+      display: inline-block;
+      margin-top: 30px;
+      padding: 12px 24px;
+      background-color: #333;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 4px;
+      transition: background-color 0.3s;
+    }
+    
+    .return-link:hover {
+      background-color: #555;
+    }
+    
+    @media (max-width: 768px) {
+      .failed-container {
+        margin: 20px;
+        padding: 20px;
+      }
+      
+      .failed-title {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <a href="/" class="logo">eats4u</a>
+      <nav>
+        <ul>
+          <li><a href="/">Products</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <div class="failed-container">
+    <div class="failed-icon">❌</div>
+    <h1 class="failed-title">Payment Failed</h1>
+    <p>We're sorry, but there was an issue processing your payment.</p>
+    <br>
+    <p><strong>This could be due to:</strong></p>
+    <ul style="list-style-type: none; padding: 0;">
+      <li>Insufficient funds</li>
+      <li>Incorrect payment details</li>
+      <li>Bank declined the transaction</li>
+      <li>Connection issues during payment</li>
+    </ul>
+    <br>
+    <p>Please try again or use a different payment method.</p>
+    <p>If you continue to have issues, please contact our <a href="https://t.me/eats4u_bot" class="support-link">support bot</a>.</p>
+    
+    <a href="/" class="return-link">Return to Products</a>
+  </div>
+  <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+  <script defer src="/_vercel/insights/script.js"></script>
+  <script defer src="/_vercel/speed-insights/script.js"></script>
+</body>
+</html>

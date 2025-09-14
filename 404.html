@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page Not Found - eats4u</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+  <script defer src="/_vercel/insights/script.js"></script>
+  <script defer src="/_vercel/speed-insights/script.js"></script>
+  <style>
+    .not-found-container {
+      max-width: 800px;
+      margin: 60px auto;
+      padding: 40px;
+      background-color: #222222;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      color: #ffffff;
+    }
+    
+    .not-found-icon {
+      font-size: 80px;
+      margin-bottom: 20px;
+      color: #8a6bff;
+    }
+    
+    .not-found-title {
+      font-size: 32px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #ffffff;
+    }
+    
+    .not-found-text {
+      font-size: 18px;
+      line-height: 1.6;
+      margin-bottom: 30px;
+      color: #cccccc;
+    }
+    
+    .return-home {
+      display: inline-block;
+      background-color: #8a6bff;
+      color: white;
+      padding: 12px 30px;
+      font-size: 16px;
+      font-weight: 500;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+      margin-top: 20px;
+    }
+    
+    .return-home:hover {
+      background-color: #7559e8;
+      transform: translateY(-2px);
+    }
+    
+    .return-home:active {
+      transform: translateY(0);
+    }
+    
+    .support-link {
+      color: #8a6bff;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+    
+    .support-link:hover {
+      color: #7559e8;
+      text-decoration: underline;
+    }
+    
+    .suggestions {
+      margin-top: 40px;
+      padding: 20px;
+      background-color: #2a2a2a;
+      border-radius: 8px;
+      text-align: left;
+    }
+    
+    .suggestions h2 {
+      margin-bottom: 15px;
+      font-size: 20px;
+      color: #ffffff;
+    }
+    
+    .suggestions ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    
+    .suggestions li {
+      margin-bottom: 10px;
+      padding-left: 20px;
+      position: relative;
+    }
+    
+    .suggestions li:before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      color: #8a6bff;
+    }
+    
+    @media (max-width: 768px) {
+      .not-found-container {
+        margin: 30px 20px;
+        padding: 30px 20px;
+      }
+      
+      .not-found-icon {
+        font-size: 60px;
+      }
+      
+      .not-found-title {
+        font-size: 26px;
+      }
+      
+      .not-found-text {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <a href="/" class="logo">eats4u</a>
+      <nav>
+        <ul>
+          <li><a href="/">Products</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <div class="not-found-container">
+    <div class="not-found-icon">😕</div>
+    <h1 class="not-found-title">404 - Page Not Found</h1>
+    <p class="not-found-text">Oops! The page you are looking for doesn't exist or has been moved.</p>
+    
+    <a href="/" class="return-home">Return to Homepage</a>
+    
+    <div class="suggestions">
+      <h2>You might be looking for:</h2>
+      <ul>
+        <li><a href="/product-15" class="support-link">Just Eat - £10 Off £15</a></li>
+        <li>Need help? Contact our <a href="https://t.me/eats4u_bot" class="support-link">support bot</a></li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

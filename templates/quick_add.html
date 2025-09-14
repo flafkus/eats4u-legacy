@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Management - eats4u</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+        .form-container { 
+            max-width: 800px; 
+            margin: 20px auto; 
+            padding: 20px; 
+            border: 1px solid #333; 
+            border-radius: 5px;
+            background-color: #222;
+        }
+        h1, h2 { color: #fff; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        select, input[type="text"], textarea { 
+            width: 100%; 
+            padding: 8px; 
+            margin-bottom: 15px; 
+            border: 1px solid #333; 
+            border-radius: 4px;
+            background-color: #333;
+            color: #fff;
+        }
+        textarea { height: 150px; }
+        button { 
+            background-color: #8a6bff; 
+            color: white; 
+            padding: 10px 15px; 
+            border: none; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            transition: background-color 0.2s ease;
+        }
+        button:hover { background-color: #7559e8; }
+        .message { padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .success { background-color: #4CAF50; color: white; }
+        .error { background-color: #f44336; color: white; }
+        .info { background-color: #2196F3; color: white; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+        th {
+            background-color: #333;
+            color: white;
+        }
+        tr:hover {
+            background-color: #333;
+        }
+        
+        /* New styles for improved interface */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #333;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        .tab.active {
+            border-color: #8a6bff;
+            font-weight: 500;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .action-btn {
+            padding: 6px 10px;
+            font-size: 12px;
+            margin-right: 5px;
+        }
+        .delete-btn {
+            background-color: #f44336;
+        }
+        .delete-btn:hover {
+            background-color: #d32f2f;
+        }
+        .code-list {
+            max-height: 400px;
+            overflow-y: auto;
+            margin: 15px 0;
+            border: 1px solid #333;
+            border-radius: 4px;
+            padding: 10px;
+            background-color: #2a2a2a;
+        }
+        .code-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            border-bottom: 1px solid #333;
+        }
+        .code-item:last-child {
+            border-bottom: none;
+        }
+        .code-text {
+            font-family: monospace;
+            background-color: #333;
+            padding: 5px 8px;
+            border-radius: 3px;
+            flex-grow: 1;
+            margin-right: 10px;
+            word-break: break-all;
+        }
+        .filter-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .filter-bar select,
+        .filter-bar input {
+            margin-bottom: 0;
+            flex: 1;
+        }
+        .search-input {
+            min-width: 200px;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 15px;
+            gap: 5px;
+        }
+        .pagination button {
+            padding: 5px 10px;
+            background-color: #333;
+        }
+        .pagination button.active {
+            background-color: #8a6bff;
+        }
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .refresh-btn {
+            padding: 8px;
+            background-color: #333;
+            margin-left: 5px;
+        }
+        .refresh-btn:hover {
+            background-color: #444;
+        }
+        .badge {
+            display: inline-block;
+            padding: 3px 6px;
+            font-size: 12px;
+            border-radius: 10px;
+            background-color: #8a6bff;
+            margin-left: 5px;
+        }
+        .bulk-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .select-all-container {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+        .loading-indicator {
+            display: none;
+            margin-left: 10px;
+            color: #8a6bff;
+        }
+        .code-count {
+            color: #aaa;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="/" class="logo">eats4u</a>
+            <nav>
+                <ul>
+                    <li><a href="/gooner/promo-codes">Promos</a></li>
+                    <li><a href="/gooner/dashboard">Dashboard</a></li>
+                    <li><a href="/gooner/logout" style="color: #ff5252;">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <div class="container" style="margin-top: 10px; text-align: right;">
+        <span style="color: #aaa; font-size: 14px;">Logged in as: {{ session.username if session.username else 'Admin' }}</span>
+    </div>
+
+    <div class="form-container">
+        <h1>Code Management</h1>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="add">Add Codes</div>
+            <div class="tab" data-tab="manage">Manage Codes</div>
+            <div class="tab" data-tab="overview">Overview</div>
+        </div>
+        
+        <!-- Add Codes Tab -->
+        <div class="tab-content active" id="add-tab">
+            <form id="quickAddForm" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <label for="product_id">Product:</label>
+                <select id="product_id" name="product_id" required>
+                    {% for product_id, product in products.items() %}
+                        <option value="{{ product_id }}">{{ product.name }}</option>
+                    {% endfor %}
+                </select>
+                
+                <label for="codes">Discount Codes:</label>
+                <textarea id="codes" name="codes" placeholder="Enter one or more discount codes (one per line)" required></textarea>
+                
+                <button type="submit">Save Code(s)</button>
+            </form>
+            
+            <div id="add-message" class="message"></div>
+        </div>
+        
+        <!-- Manage Codes Tab -->
+        <div class="tab-content" id="manage-tab">
+            <div class="filter-bar">
+                <select id="product-filter" style="max-width: 250px;">
+                    {% for product_id, product in products.items() %}
+                        <option value="{{ product_id }}">{{ product.name }}</option>
+                    {% endfor %}
+                </select>
+                
+                <input type="text" id="search-codes" class="search-input" placeholder="Search codes...">
+                
+                <button id="refresh-codes" class="refresh-btn" title="Refresh codes">↻</button>
+            </div>
+            
+            <div class="code-count">Loading codes...</div>
+            
+            <div class="select-all-container">
+                <input type="checkbox" id="select-all">
+                <label for="select-all" style="display: inline; font-weight: normal;">Select All</label>
+            </div>
+            
+            <div class="code-list" id="code-list">
+                <div style="text-align: center; padding: 20px;">Loading codes...</div>
+            </div>
+            
+            <div class="bulk-actions">
+                <button id="delete-selected" class="delete-btn">Delete Selected</button>
+                <button id="export-selected">Export Selected</button>
+            </div>
+            
+            <div class="pagination" id="pagination"></div>
+            
+            <div id="manage-message" class="message"></div>
+        </div>
+        
+        <!-- Overview Tab -->
+        <div class="tab-content" id="overview-tab">
+            <h2>Available Codes Summary</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Available Codes</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product_id, product in products.items() %}
+                        <tr>
+                            <td>{{ product.name }}</td>
+                            <td>{{ code_counts.get(product_id, 0) }}</td>
+                            <td>
+                                <button class="action-btn view-codes" data-product="{{ product_id }}">View Codes</button>
+                                <button class="action-btn delete-btn delete-all" data-product="{{ product_id }}">Delete All</button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script>
+        const csrfToken = "{{ csrf_token() }}";
+        let currentCodes = [];
+        let currentPage = 1;
+        let codesPerPage = 25;
+        
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Set active tab
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Show active content
+                const tabId = this.getAttribute('data-tab');
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(tabId + '-tab').classList.add('active');
+                
+                // Load codes if switching to manage tab
+                if (tabId === 'manage') {
+                    loadCodes();
+                }
+            });
+        });
+        
+        // Add codes form submission
+        document.getElementById('quickAddForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const productId = document.getElementById('product_id').value.trim();
+            const codesText = document.getElementById('codes').value.trim();
+            
+            if (!productId || !codesText) {
+                showMessage('add-message', 'Product and at least one code are required', 'error');
+                return;
+            }
+            
+            const formData = new FormData(this);
+            
+            fetch('/gooner/quick-add', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    showMessage('add-message', result.message, 'success');
+                    document.getElementById('codes').value = '';
+                    // Refresh the page after 1.5 seconds
+                    setTimeout(() => { location.reload(); }, 1500);
+                } else {
+                    showMessage('add-message', 'Error: ' + result.error, 'error');
+                }
+            })
+            .catch(error => {
+                showMessage('add-message', 'Error: ' + error.message, 'error');
+            });
+        });
+        
+        // Function to load codes from the backend API
+        function loadCodes() {
+            const productId = document.getElementById('product-filter').value;
+            const searchTerm = document.getElementById('search-codes').value.trim();
+            
+            document.querySelector('.code-count').textContent = 'Loading codes...';
+            document.getElementById('code-list').innerHTML = '<div style="text-align: center; padding: 20px;">Loading codes...</div>';
+            
+            // Call the backend API to get codes
+            fetch(`/api/codes/${productId}?search=${encodeURIComponent(searchTerm)}&page=${currentPage}&per_page=${codesPerPage}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to load codes');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    currentCodes = data.codes;
+                    const totalCodes = data.total;
+                    document.querySelector('.code-count').textContent = `${totalCodes} codes available`;
+                    
+                    // Render code list
+                    renderCodeList(currentCodes);
+                    
+                    // Render pagination
+                    renderPagination(totalCodes);
+                    
+                    // Uncheck "select all" checkbox
+                    document.getElementById('select-all').checked = false;
+                })
+                .catch(error => {
+                    document.getElementById('code-list').innerHTML = `<div style="text-align: center; padding: 20px; color: #f44336;">Error loading codes: ${error.message}</div>`;
+                    document.querySelector('.code-count').textContent = 'Error loading codes';
+                });
+        }
+        
+        // Render the list of codes
+        function renderCodeList(codes) {
+            const codeListElement = document.getElementById('code-list');
+            
+            if (codes.length === 0) {
+                codeListElement.innerHTML = '<div style="text-align: center; padding: 20px;">No codes found</div>';
+                return;
+            }
+            
+            codeListElement.innerHTML = '';
+            
+            codes.forEach((code, index) => {
+                const codeItem = document.createElement('div');
+                codeItem.className = 'code-item';
+                codeItem.innerHTML = `
+                    <input type="checkbox" class="code-checkbox" id="code-${index}" data-code="${code}">
+                    <span class="code-text">${code}</span>
+                    <button class="action-btn delete-btn delete-code" data-code="${code}">Delete</button>
+                `;
+                codeListElement.appendChild(codeItem);
+            });
+            
+            // Add event listeners to delete buttons
+            document.querySelectorAll('.delete-code').forEach(button => {
+                button.addEventListener('click', function() {
+                    const code = this.getAttribute('data-code');
+                    deleteCode(code);
+                });
+            });
+        }
+        
+        // Render pagination controls
+        function renderPagination(totalCodes) {
+            const totalPages = Math.ceil(totalCodes / codesPerPage);
+            const paginationElement = document.getElementById('pagination');
+            
+            if (totalPages <= 1) {
+                paginationElement.innerHTML = '';
+                return;
+            }
+            
+            let paginationHTML = '';
+            
+            // Previous button
+            paginationHTML += `<button ${currentPage === 1 ? 'disabled' : ''} id="prev-page">←</button>`;
+            
+            // Page numbers (show at most 5 pages)
+            const startPage = Math.max(1, currentPage - 2);
+            const endPage = Math.min(totalPages, startPage + 4);
+            
+            for (let i = startPage; i <= endPage; i++) {
+                paginationHTML += `<button class="${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`;
+            }
+            
+            // Next button
+            paginationHTML += `<button ${currentPage === totalPages ? 'disabled' : ''} id="next-page">→</button>`;
+            
+            paginationElement.innerHTML = paginationHTML;
+            
+            // Add event listeners to pagination buttons
+            document.querySelectorAll('#pagination button[data-page]').forEach(button => {
+                button.addEventListener('click', function() {
+                    currentPage = parseInt(this.getAttribute('data-page'));
+                    loadCodes();
+                });
+            });
+            
+            // Previous button
+            const prevButton = document.getElementById('prev-page');
+            if (prevButton) {
+                prevButton.addEventListener('click', function() {
+                    if (currentPage > 1) {
+                        currentPage--;
+                        loadCodes();
+                    }
+                });
+            }
+            
+            // Next button
+            const nextButton = document.getElementById('next-page');
+            if (nextButton) {
+                nextButton.addEventListener('click', function() {
+                    if (currentPage < totalPages) {
+                        currentPage++;
+                        loadCodes();
+                    }
+                });
+            }
+        }
+        
+        // Function to delete a single code
+        function deleteCode(code) {
+            if (!confirm(`Are you sure you want to delete the code: ${code}?`)) {
+                return;
+            }
+            
+            const productId = document.getElementById('product-filter').value;
+            
+            // Show feedback that we're deleting
+            showMessage('manage-message', `Deleting code: ${code}...`, 'info');
+            
+            // Call the backend API to delete the code
+            fetch(`/api/codes/${productId}/${encodeURIComponent(code)}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': csrfToken
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => Promise.reject(new Error(err.error || 'Failed to delete code')));
+                }
+                return response.json();
+            })
+            .then(result => {
+                if (result.success) {
+                    // Reload codes to get updated list
+                    loadCodes();
+                    showMessage('manage-message', result.message, 'success');
+                } else {
+                    showMessage('manage-message', `Error: ${result.error}`, 'error');
+                }
+            })
+            .catch(error => {
+                showMessage('manage-message', `Error: ${error.message}`, 'error');
+            });
+        }
+        
+        // Function to delete multiple selected codes
+        function deleteSelectedCodes() {
+            const selectedCodes = getSelectedCodes();
+            
+            if (selectedCodes.length === 0) {
+                showMessage('manage-message', 'No codes selected', 'error');
+                return;
+            }
+            
+            if (!confirm(`Are you sure you want to delete ${selectedCodes.length} selected codes?`)) {
+                return;
+            }
+            
+            const productId = document.getElementById('product-filter').value;
+            
+            // Show feedback that we're deleting
+            showMessage('manage-message', `Deleting ${selectedCodes.length} codes...`, 'info');
+            
+            // Call the backend API to delete the codes
+            fetch(`/api/codes/${productId}/bulk-delete`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify({
+                    codes: selectedCodes
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => Promise.reject(new Error(err.error || 'Failed to delete codes')));
+                }
+                return response.json();
+            })
+            .then(result => {
+                if (result.success) {
+                    // Reload codes to get updated list
+                    loadCodes();
+                    showMessage('manage-message', result.message, 'success');
+                } else {
+                    showMessage('manage-message', `Error: ${result.error}`, 'error');
+                }
+            })
+            .catch(error => {
+                showMessage('manage-message', `Error: ${error.message}`, 'error');
+            });
+        }
+        
+        // Function to get all currently selected codes
+        function getSelectedCodes() {
+            const selectedCodes = [];
+            document.querySelectorAll('.code-checkbox:checked').forEach(checkbox => {
+                selectedCodes.push(checkbox.getAttribute('data-code'));
+            });
+            return selectedCodes;
+        }
+        
+        // Function to export selected codes
+        function exportSelectedCodes() {
+            const selectedCodes = getSelectedCodes();
+            
+            if (selectedCodes.length === 0) {
+                showMessage('manage-message', 'No codes selected for export', 'error');
+                return;
+            }
+            
+            // Create text content for download
+            const textContent = selectedCodes.join('\n');
+            
+            // Create a blob and download link
+            const blob = new Blob([textContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `exported_codes_${new Date().toISOString().slice(0, 10)}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            
+            // Clean up
+            setTimeout(() => {
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 0);
+            
+            showMessage('manage-message', `Exported ${selectedCodes.length} codes`, 'success');
+        }
+        
+        // Function to delete all codes for a product
+        function deleteAllCodes(productId) {
+            const productSelect = document.querySelector(`option[value="${productId}"]`);
+            const productName = productSelect ? productSelect.textContent : productId;
+            
+            if (!confirm(`Are you sure you want to delete ALL codes for ${productName}? This action cannot be undone.`)) {
+                return;
+            }
+            
+            // Call the API to delete all codes
+            fetch(`/api/codes/${productId}/delete-all`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => Promise.reject(new Error(err.error || 'Failed to delete all codes')));
+                }
+                return response.json();
+            })
+            .then(result => {
+                if (result.success) {
+                    showMessage('manage-message', result.message, 'success');
+                    // Refresh the page after 1.5 seconds
+                    setTimeout(() => { location.reload(); }, 1500);
+                } else {
+                    showMessage('manage-message', `Error: ${result.error}`, 'error');
+                }
+            })
+            .catch(error => {
+                showMessage('manage-message', `Error: ${error.message}`, 'error');
+            });
+        }
+        
+        // Utility function to show messages
+        function showMessage(elementId, text, type) {
+            const messageDiv = document.getElementById(elementId);
+            messageDiv.textContent = text;
+            messageDiv.className = 'message ' + type;
+            
+            // Clear message after 5 seconds
+            setTimeout(() => {
+                messageDiv.textContent = '';
+                messageDiv.className = '';
+            }, 5000);
+        }
+        
+        // Add event listener for the refresh button
+        document.getElementById('refresh-codes').addEventListener('click', function() {
+            loadCodes();
+        });
+        
+        // Add event listener for the search input
+        document.getElementById('search-codes').addEventListener('input', function() {
+            // Debounce the search to avoid too many requests
+            clearTimeout(this.debounceTimer);
+            this.debounceTimer = setTimeout(() => {
+                currentPage = 1; // Reset to first page on new search
+                loadCodes();
+            }, 300);
+        });
+        
+        // Add event listener for product filter change
+        document.getElementById('product-filter').addEventListener('change', function() {
+            currentPage = 1; // Reset to first page on product change
+            loadCodes();
+        });
+        
+        // Add event listener for the "Delete Selected" button
+        document.getElementById('delete-selected').addEventListener('click', function() {
+            deleteSelectedCodes();
+        });
+        
+        // Add event listener for the "Export Selected" button
+        document.getElementById('export-selected').addEventListener('click', function() {
+            exportSelectedCodes();
+        });
+        
+        // Add event listeners for "View Codes" buttons
+        document.querySelectorAll('.view-codes').forEach(button => {
+            button.addEventListener('click', function() {
+                const productId = this.getAttribute('data-product');
+                // Switch to manage tab
+                document.querySelector('.tab[data-tab="manage"]').click();
+                // Set the product filter to the selected product
+                document.getElementById('product-filter').value = productId;
+                // Reset to first page
+                currentPage = 1;
+                // Load codes for the selected product
+                loadCodes();
+            });
+        });
+        
+        // Add event listeners for "Delete All" buttons
+        document.querySelectorAll('.delete-all').forEach(button => {
+            button.addEventListener('click', function() {
+                const productId = this.getAttribute('data-product');
+                deleteAllCodes(productId);
+            });
+        });
+        
+        // Add event listener for the "Select All" checkbox
+        document.getElementById('select-all').addEventListener('change', function() {
+            const isChecked = this.checked;
+            document.querySelectorAll('.code-checkbox').forEach(checkbox => {
+                checkbox.checked = isChecked;
+            });
+        });
+    </script>
+</body>
+</html>

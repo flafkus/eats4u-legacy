@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - eats4u</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+        .dashboard-container { 
+            max-width: 1200px; 
+            margin: 20px auto; 
+            padding: 20px; 
+            border-radius: 5px;
+        }
+        h1, h2 { color: #fff; }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background-color: #222;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 32px;
+            font-weight: 600;
+            margin: 10px 0;
+            color: #8a6bff;
+        }
+        .stat-label {
+            font-size: 14px;
+            color: #aaa;
+        }
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        @media (max-width: 768px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .chart-container {
+            background-color: #222;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .chart-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #fff;
+            font-weight: 500;
+        }
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .filter-label {
+            font-size: 14px;
+            color: #aaa;
+        }
+        select, input[type="date"] {
+            background-color: #333;
+            border: 1px solid #444;
+            border-radius: 4px;
+            color: #fff;
+            padding: 8px 12px;
+            font-family: 'Poppins', sans-serif;
+        }
+        .filter-button {
+            background-color: #8a6bff;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+        .filter-button:hover {
+            background-color: #7559e8;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+        .data-table th, .data-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+        .data-table th {
+            background-color: #333;
+            color: white;
+            font-weight: 500;
+        }
+        .data-table tr:hover {
+            background-color: #2a2a2a;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #333;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        .tab.active {
+            border-color: #8a6bff;
+            font-weight: 500;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .date-range {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+            /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        .modal-content {
+            background-color: #2a2a2a;
+            margin: 5% auto;
+            padding: 0;
+            width: 80%;
+            max-width: 700px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            animation: modalFadeIn 0.3s;
+        }
+
+        @keyframes modalFadeIn {
+            from {opacity: 0; transform: translateY(-20px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: #333;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: #fff;
+        }
+
+        .close-modal {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-modal:hover {
+            color: #fff;
+        }
+
+        .modal-body {
+            padding: 20px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .order-detail-row {
+            display: flex;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #3a3a3a;
+        }
+
+        .detail-label {
+            width: 150px;
+            font-weight: 500;
+            color: #8a6bff;
+        }
+
+        .detail-value {
+            flex: 1;
+            word-break: break-word;
+        }
+
+        .order-detail-section {
+            margin-top: 20px;
+        }
+
+        .code-block {
+            background-color: #333;
+            padding: 12px;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-break: break-all;
+            margin-top: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        /* Search Styles */
+        .search-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        #order-search {
+            flex: 1;
+            padding: 8px 12px;
+            background-color: #333;
+            border: 1px solid #444;
+            border-radius: 4px;
+            color: #fff;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Order row hover style to indicate clickable */
+        #orders-table-body tr {
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        #orders-table-body tr:hover {
+            background-color: #3a3a3a;
+        }
+
+        /* Highlight search results */
+        tr.search-highlight {
+            background-color: rgba(138, 107, 255, 0.2) !important;
+        }
+
+        tr.search-highlight:hover {
+            background-color: rgba(138, 107, 255, 0.3) !important;
+        }
+
+        /* No results message */
+        .no-results {
+            text-align: center;
+            padding: 20px;
+            color: #888;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="/" class="logo">eats4u</a>
+            <nav>
+                <ul>
+                    <li><a href="/gooner/quick-add">Add Codes</a></li>
+                    <li><a href="/gooner/promo-codes">Promos</a></li>
+                    <li><a href="/gooner/logout" style="color: #ff5252;">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <div class="dashboard-container">
+        <h1>Admin Dashboard</h1>
+        
+        <div class="filters">
+            <div class="filter-group">
+                <span class="filter-label">Date Range:</span>
+                <input type="date" id="start-date" value="{{ start_date }}">
+                <span>to</span>
+                <input type="date" id="end-date" value="{{ end_date }}">
+            </div>
+            
+            <div class="filter-group">
+                <span class="filter-label">Product:</span>
+                <select id="product-filter">
+                    <option value="all">All Products</option>
+                    {% for product_id, product in products.items() %}
+                    <option value="{{ product_id }}">{{ product.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <button id="apply-filters" class="filter-button">Apply Filters</button>
+            <button id="reset-filters" class="filter-button">Reset</button>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Revenue</div>
+                <div class="stat-value">£{{ total_revenue }}</div>
+                <div class="stat-label">All Time</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-label">Orders</div>
+                <div class="stat-value">{{ total_orders }}</div>
+                <div class="stat-label">All Time</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-label">Codes Sold</div>
+                <div class="stat-value">{{ total_codes }}</div>
+                <div class="stat-label">All Time</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-label">Revenue</div>
+                <div class="stat-value">£{{ period_revenue }}</div>
+                <div class="stat-label">Selected Period</div>
+            </div>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="overview">Overview</div>
+            <div class="tab" data-tab="orders">Recent Orders</div>
+            <div class="tab" data-tab="products">Products Analysis</div>
+            <div class="tab" data-tab="payment">Payment Methods</div>
+        </div>
+        
+        <div class="tab-content active" id="overview-tab">
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <h3 class="chart-title">Daily Revenue</h3>
+                    <canvas id="revenueChart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <h3 class="chart-title">Orders By Product</h3>
+                    <canvas id="productChart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <h3 class="chart-title">Payment Methods</h3>
+                    <canvas id="paymentChart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <h3 class="chart-title">Daily Orders</h3>
+                    <canvas id="ordersChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="orders-tab">
+            <div class="chart-container">
+                <h3 class="chart-title">Recent Orders</h3>
+                
+                <div class="search-container">
+                    <input type="text" id="order-search" placeholder="Search by Order ID or Email...">
+                    <button id="search-button" class="filter-button">Search</button>
+                    <button id="clear-search" class="filter-button" style="background-color: #666;">Clear</button>
+                </div>
+                
+                <div style="overflow-x: auto;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Order ID</th>
+                                <th>Product</th>
+                                <th>Email</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Promo</th>
+                                <th>Payment</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-table-body">
+                            {% for order in recent_orders %}
+                            <tr 
+                                data-order-id="{{ order.order_id }}"
+                                data-timestamp="{{ order.formatted_date|default(order.timestamp) }}"
+                                data-product-name="{{ order.product_name }}"
+                                data-email="{{ order.email|default('') }}"
+                                data-payment-method="{{ order.payment_method }}"
+                                data-payment-id="{{ order.payment_id }}"
+                                data-price="{{ order.price|default(200) }}"
+                                data-quantity="{{ order.quantity|default(1) }}"
+                                data-total-price="{{ order.total_price|default(0) }}"
+                                data-promo-code="{{ order.promo_code|default('') }}"
+                                data-code="{{ order.code|default('') }}"
+                            >
+                                <td>{{ order.formatted_date|default(order.timestamp) }}</td>
+                                <td>{{ order.order_id }}</td>
+                                <td>{{ order.product_name }}</td>
+                                <td>{{ order.email|default('N/A') }}</td>
+                                <td>£{{ "%.2f"|format(order.display_price|default((order.price * order.quantity / 100)|default(2.00))) }}</td>
+                                <td>{{ order.quantity|default(1) }}</td>
+                                <td>{{ order.promo_code|default('None') }}</td>
+                                <td>{{ order.payment_method }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        
+        <div class="tab-content" id="products-tab">
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <h3 class="chart-title">Product Sales Breakdown</h3>
+                    <canvas id="productBreakdownChart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <h3 class="chart-title">Sales Trend by Product</h3>
+                    <canvas id="productTrendChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="payment-tab">
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <h3 class="chart-title">Payment Method Distribution</h3>
+                    <canvas id="paymentDistributionChart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <h3 class="chart-title">Payment Method Trends</h3>
+                    <canvas id="paymentTrendChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="orderDetailsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Order Details</h3>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="order-details-content">
+                    <div class="order-detail-row">
+                        <span class="detail-label">Order ID:</span>
+                        <span id="detail-order-id" class="detail-value"></span>
+                    </div>
+                    <div class="order-detail-row">
+                        <span class="detail-label">Date:</span>
+                        <span id="detail-date" class="detail-value"></span>
+                    </div>
+                    <div class="order-detail-row">
+                        <span class="detail-label">Product:</span>
+                        <span id="detail-product" class="detail-value"></span>
+                    </div>
+                    <div class="order-detail-row">
+                        <span class="detail-label">Customer Email:</span>
+                        <span id="detail-email" class="detail-value"></span>
+                    </div>
+                    <div class="order-detail-row">
+                        <span class="detail-label">Payment Method:</span>
+                        <span id="detail-payment-method" class="detail-value"></span>
+                    </div>
+                    <div class="order-detail-row">
+                        <span class="detail-label">Payment ID:</span>
+                        <span id="detail-payment-id" class="detail-value"></span>
+                    </div>
+                    <div class="order-detail-row">
+                        <span class="detail-label">Unit Price:</span>
+                        <span id="detail-unit-price" class="detail-value"></span>
+                    </div>
+                    <div class="order-detail-row">
+                        <span class="detail-label">Quantity:</span>
+                        <span id="detail-quantity" class="detail-value"></span>
+                    </div>
+                    <div class="order-detail-row">
+                        <span class="detail-label">Total Amount:</span>
+                        <span id="detail-amount" class="detail-value"></span>
+                    </div>
+                    <div class="order-detail-row">
+                        <span class="detail-label">Promo Code:</span>
+                        <span id="detail-promo-code" class="detail-value"></span>
+                    </div>
+                    <div class="order-detail-section">
+                        <h4>Code(s) Issued:</h4>
+                        <div id="detail-codes" class="code-block"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+
+        // Modal and search functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize existing charts first...
+            
+            // Get modal element
+            const orderModal = document.getElementById('orderDetailsModal');
+            const closeModalBtn = document.querySelector('.close-modal');
+            const ordersTableBody = document.getElementById('orders-table-body');
+            const searchInput = document.getElementById('order-search');
+            const searchButton = document.getElementById('search-button');
+            const clearSearchButton = document.getElementById('clear-search');
+        
+            // Store the original table rows for search reset
+            let originalTableRows = '';
+
+            function openOrderModal(orderData) {
+                // Populate the modal with order details
+                document.getElementById('detail-order-id').textContent = orderData.order_id || 'N/A';
+                document.getElementById('detail-date').textContent = orderData.timestamp || 'N/A';
+                document.getElementById('detail-product').textContent = orderData.product_name || 'N/A';
+                document.getElementById('detail-email').textContent = orderData.email || 'N/A';
+                        
+                // Fix for payment method
+                const paymentMethod = formatPaymentMethod(orderData.payment_method) || 'N/A';
+                document.getElementById('detail-payment-method').textContent = paymentMethod;
+                        
+                document.getElementById('detail-payment-id').textContent = orderData.payment_id || 'N/A';
+                        
+                // Format unit price
+                let unitPriceText = 'N/A';
+                if (orderData.price) {
+                    unitPriceText = `£${(orderData.price / 100).toFixed(2)}`;
+                }
+                document.getElementById('detail-unit-price').textContent = unitPriceText;
+
+                // Fix for quantity - ensure it's displaying the actual quantity value
+                document.getElementById('detail-quantity').textContent = orderData.quantity || '1';
+
+                // Format amount based on total_price
+                let amountText = 'N/A';
+                if (orderData.total_price) {
+                    amountText = `£${(orderData.total_price / 100).toFixed(2)}`;
+                } else if (orderData.price && orderData.quantity) {
+                    // Calculate if total_price is not available
+                    amountText = `£${((orderData.price * orderData.quantity) / 100).toFixed(2)}`;
+                }
+                document.getElementById('detail-amount').textContent = amountText;
+
+                // Show promo code if present
+                document.getElementById('detail-promo-code').textContent = orderData.promo_code || 'None';
+
+                // Format codes for display
+                const codesElement = document.getElementById('detail-codes');
+                if (orderData.code) {
+                    // Convert pipe-separated codes back to newlines for display
+                    let codeText = orderData.code.replace(/ \| /g, '\n');
+                    codesElement.textContent = codeText;
+                } else {
+                    codesElement.textContent = 'No codes available';
+                }
+
+                // Show the modal
+                orderModal.style.display = 'block';
+
+                // Prevent body scrolling when modal is open
+                document.body.style.overflow = 'hidden';
+            }
+
+            // Helper function to format payment method names
+            function formatPaymentMethod(method) {
+                if (!method) return 'Unknown';
+
+                const formattedMethods = {
+                    'stripe': 'Stripe',
+                    'paypal': 'PayPal',
+                    'nowpayments': 'Crypto',
+                };
+
+                return formattedMethods[method.toLowerCase()] || method;
+            }
+        
+            // Close the modal when clicking the X
+            if (closeModalBtn) {
+                closeModalBtn.addEventListener('click', function() {
+                    orderModal.style.display = 'none';
+                    document.body.style.overflow = '';
+                });
+            }
+        
+            // Close the modal when clicking outside of it
+            window.addEventListener('click', function(e) {
+                if (e.target === orderModal) {
+                    orderModal.style.display = 'none';
+                    document.body.style.overflow = '';
+                }
+            });
+        
+            // Initialize order row click handlers and search when the orders tab is active
+            document.querySelectorAll('.tab').forEach(tab => {
+                if (tab.getAttribute('data-tab') === 'orders') {
+                    tab.addEventListener('click', function() {
+                        // Initialize once the tab is active
+                        setTimeout(() => {
+                            if (!originalTableRows) {
+                                // Save original table contents first time
+                                originalTableRows = ordersTableBody.innerHTML;
+                                
+                                // Add click handlers to each order row
+                                addOrderRowClickHandlers();
+                                
+                                // Set up search functionality
+                                setupSearchFunctionality();
+                            }
+                        }, 100);
+                    });
+                }
+            });
+        
+            // If orders tab is initially active, set up the handlers
+            if (document.querySelector('.tab[data-tab="orders"]').classList.contains('active')) {
+                // Save original table contents
+                originalTableRows = ordersTableBody.innerHTML;
+                
+                // Add click handlers to each order row
+                addOrderRowClickHandlers();
+                
+                // Set up search functionality
+                setupSearchFunctionality();
+            }
+        
+            function addOrderRowClickHandlers() {
+                const rows = ordersTableBody.querySelectorAll('tr');
+                        
+                rows.forEach(row => {
+                    row.addEventListener('click', function() {
+                        // Extract data from the row's data attributes
+                        const orderData = {
+                            order_id: this.getAttribute('data-order-id'),
+                            timestamp: this.getAttribute('data-timestamp'),
+                            product_name: this.getAttribute('data-product-name'),
+                            email: this.getAttribute('data-email'),
+                            payment_method: this.getAttribute('data-payment-method'),
+                            payment_id: this.getAttribute('data-payment-id'),
+                            price: parseInt(this.getAttribute('data-price')) || 0,
+                            quantity: parseInt(this.getAttribute('data-quantity')) || 1,
+                            total_price: parseInt(this.getAttribute('data-total-price')) || 0,
+                            promo_code: this.getAttribute('data-promo-code'),
+                            code: this.getAttribute('data-code')
+                        };
+                        
+                        openOrderModal(orderData);
+                    });
+                });
+            }
+        
+            // Function to set up search functionality
+            function setupSearchFunctionality() {
+                if (!searchButton || !searchInput || !clearSearchButton) return;
+                
+                // Search on button click
+                searchButton.addEventListener('click', performSearch);
+                
+                // Search on Enter key
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        performSearch();
+                    }
+                });
+                
+                // Clear search results
+                clearSearchButton.addEventListener('click', function() {
+                    searchInput.value = '';
+                    ordersTableBody.innerHTML = originalTableRows;
+                    addOrderRowClickHandlers(); // Re-add click handlers to the restored rows
+                });
+            }
+        
+            // Function to perform the search
+            function performSearch() {
+                const searchTerm = searchInput.value.trim().toLowerCase();
+                
+                if (!searchTerm) {
+                    // If search is empty, restore original table
+                    ordersTableBody.innerHTML = originalTableRows;
+                    addOrderRowClickHandlers();
+                    return;
+                }
+                
+                // Get all rows
+                const rows = ordersTableBody.querySelectorAll('tr');
+                let foundResults = false;
+                
+                // Clear table body
+                ordersTableBody.innerHTML = '';
+                
+                // Filter rows based on search term
+                rows.forEach(row => {
+                    const orderId = row.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
+                    const email = row.querySelector('td:nth-child(4)').textContent.trim().toLowerCase();
+                    
+                    if (orderId.includes(searchTerm) || email.includes(searchTerm)) {
+                        // Create a clone of the row to avoid reference issues
+                        const newRow = row.cloneNode(true);
+                        newRow.classList.add('search-highlight');
+                        ordersTableBody.appendChild(newRow);
+                        foundResults = true;
+                    }
+                });
+                
+                // Show 'no results' message if nothing found
+                if (!foundResults) {
+                    const noResultsRow = document.createElement('tr');
+                    noResultsRow.innerHTML = `<td colspan="6" class="no-results">No orders found matching "${searchTerm}"</td>`;
+                    ordersTableBody.appendChild(noResultsRow);
+                } else {
+                    // Add click handlers to the filtered rows
+                    addOrderRowClickHandlers();
+                }
+            }
+        });
+
+        // Global chart options for consistent styling
+        Chart.defaults.color = '#aaaaaa';
+        Chart.defaults.font.family = "'Poppins', sans-serif";
+        
+        // Initialize tabs
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Set active tab
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Show active content
+                const tabId = this.getAttribute('data-tab');
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(tabId + '-tab').classList.add('active');
+            });
+        });
+        
+        // Handle filter button clicks
+        document.getElementById('apply-filters').addEventListener('click', applyFilters);
+        document.getElementById('reset-filters').addEventListener('click', resetFilters);
+        
+        function applyFilters() {
+            const startDate = document.getElementById('start-date').value;
+            const endDate = document.getElementById('end-date').value;
+            const product = document.getElementById('product-filter').value;
+            
+            // Redirect with filter parameters
+            window.location.href = `/gooner/dashboard?start=${startDate}&end=${endDate}&product=${product}`;
+        }
+        
+        function resetFilters() {
+            window.location.href = '/gooner/dashboard';
+        }
+        
+        // Chart data from server - properly escaped with JSON.parse
+        const chartData = JSON.parse('{{ chart_data|tojson|safe }}');
+        
+        // Create charts when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Daily Revenue Chart
+            const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+            new Chart(revenueCtx, {
+                type: 'line',
+                data: {
+                    labels: chartData.daily_revenue.labels,
+                    datasets: [{
+                        label: 'Revenue (£)',
+                        data: chartData.daily_revenue.data,
+                        backgroundColor: 'rgba(138, 107, 255, 0.2)',
+                        borderColor: 'rgba(138, 107, 255, 1)',
+                        borderWidth: 2,
+                        tension: 0.1,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Product Pie Chart
+            const productCtx = document.getElementById('productChart').getContext('2d');
+            new Chart(productCtx, {
+                type: 'pie',
+                data: {
+                    labels: chartData.product_breakdown.labels,
+                    datasets: [{
+                        data: chartData.product_breakdown.data,
+                        backgroundColor: [
+                            'rgba(138, 107, 255, 0.8)',
+                            'rgba(99, 255, 132, 0.8)',
+                            'rgba(255, 99, 132, 0.8)',
+                            'rgba(255, 206, 86, 0.8)',
+                            'rgba(54, 162, 235, 0.8)'
+                        ],
+                        borderColor: '#222',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        }
+                    }
+                }
+            });
+            
+            // Payment Methods Chart
+            const paymentCtx = document.getElementById('paymentChart').getContext('2d');
+            new Chart(paymentCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: chartData.payment_methods.labels,
+                    datasets: [{
+                        data: chartData.payment_methods.data,
+                        backgroundColor: [
+                            'rgba(54, 162, 235, 0.8)',
+                            'rgba(75, 192, 192, 0.8)',
+                            'rgba(255, 206, 86, 0.8)',
+                            'rgba(153, 102, 255, 0.8)',
+                            'rgba(255, 159, 64, 0.8)'
+                        ],
+                        borderColor: '#222',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        }
+                    }
+                }
+            });
+            
+            // Daily Orders Chart
+            const ordersCtx = document.getElementById('ordersChart').getContext('2d');
+            new Chart(ordersCtx, {
+                type: 'bar',
+                data: {
+                    labels: chartData.daily_orders.labels,
+                    datasets: [{
+                        label: 'Orders',
+                        data: chartData.daily_orders.data,
+                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Product Breakdown Chart (Products tab)
+            const productBreakdownCtx = document.getElementById('productBreakdownChart').getContext('2d');
+            new Chart(productBreakdownCtx, {
+                type: 'bar',
+                data: {
+                    labels: chartData.product_breakdown.labels,
+                    datasets: [{
+                        label: 'Quantity Sold',
+                        data: chartData.product_breakdown.quantities,
+                        backgroundColor: 'rgba(138, 107, 255, 0.6)',
+                        borderColor: 'rgba(138, 107, 255, 1)',
+                        borderWidth: 1
+                    }, {
+                        label: 'Revenue (£)',
+                        data: chartData.product_breakdown.revenue,
+                        backgroundColor: 'rgba(255, 159, 64, 0.6)',
+                        borderColor: 'rgba(255, 159, 64, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Product Trend Chart (Products tab)
+            const productTrendCtx = document.getElementById('productTrendChart').getContext('2d');
+            new Chart(productTrendCtx, {
+                type: 'line',
+                data: {
+                    labels: chartData.product_trends.labels,
+                    datasets: chartData.product_trends.datasets
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Payment Distribution Chart (Payment tab)
+            const paymentDistCtx = document.getElementById('paymentDistributionChart').getContext('2d');
+            new Chart(paymentDistCtx, {
+                type: 'polarArea',
+                data: {
+                    labels: chartData.payment_methods.labels,
+                    datasets: [{
+                        data: chartData.payment_methods.data,
+                        backgroundColor: [
+                            'rgba(54, 162, 235, 0.7)',
+                            'rgba(75, 192, 192, 0.7)',
+                            'rgba(255, 206, 86, 0.7)',
+                            'rgba(153, 102, 255, 0.7)',
+                            'rgba(255, 159, 64, 0.7)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                        }
+                    }
+                }
+            });
+            
+            // Payment Trend Chart (Payment tab)
+            const paymentTrendCtx = document.getElementById('paymentTrendChart').getContext('2d');
+            new Chart(paymentTrendCtx, {
+                type: 'line',
+                data: {
+                    labels: chartData.payment_trends.labels,
+                    datasets: chartData.payment_trends.datasets
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>eats4u - Just Eat</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://www.paypal.com/sdk/js?client-id=AcBkaqHgFoGkJ477cHnr6yGEExm9_Vh9myZOEgp4uTcAr8On8jHKzzhJIVZPHCqQiEFH1q9DEDsocuBe&currency=GBP"></script>
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://eats4u.net/product-15">
+  <meta property="og:title" content="eats4u: Just Eat - £10 Off £15">
+  <meta property="og:description" content="Get the cheapest and best quality codes at eats4u!">
+  <meta property="og:image" content="https://eats4u.net/static/images/just-eat.png">
+  <meta property="theme-color" content="#8a6bff">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+  <script defer src="/_vercel/insights/script.js"></script>
+  <script defer src="/_vercel/speed-insights/script.js"></script>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <a href="/" class="logo">eats4u</a>
+      <nav>
+        <ul>
+          <li><a href="/">Products</a></li>
+          <li><a href="/faq">FAQ</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <section class="product-detail">
+    <div class="container">
+      <div class="product-layout">
+        <div class="product-image-container">
+          <img src="/static/images/just-eat.png" alt="£10 off £15">
+        </div>
+        
+        <div class="product-info">
+          <h1>Just Eat - £10 Off £15</h1>
+          <div class="product-price">£2.00</div>
+
+          <div class="stock-status-container" style="margin: 15px 0; display: flex; align-items: center;">
+            <span style="margin-right: 10px; font-weight: 500;">Stock Status:</span>
+            <span class="product-stock">Checking stock...</span>
+          </div>
+          
+          <div class="rating">
+            <span class="stars">★ ★ ★ ★ ★</span>
+            <span class="rating-text">5 stars</span>
+          </div>
+          
+          <div class="quantity-section">
+            <div class="quantity-controls">
+              <label for="quantity">Quantity:</label>
+              <div class="quantity-input-container">
+                <button type="button" class="quantity-btn decrease">-</button>
+                <input type="number" id="quantity" name="quantity" min="1" max="25" value="1">
+                <button type="button" class="quantity-btn increase">+</button>
+              </div>
+            </div>
+            <button class="buy-button" data-product-link="#">Buy now</button>
+          </div>
+          
+          <div class="product-details">
+            <div class="detail-item">
+              <span class="emoji">⚡</span>
+              <p>All codes are instantly delivered to your email</p>
+            </div>
+            
+            <div class="detail-item">
+              <span class="emoji">📅</span>
+              <p>Expiry: 31/03/2025</p>
+            </div>
+            
+            <div class="detail-item">
+              <span class="emoji">⏱️</span>
+              <p>3 hour warranty</p>
+            </div>
+          </div>
+          
+          <div class="guide-section">
+            <h2>Guide:</h2>
+            <ul>
+              <li>1. Download the JE app / open the website</li>
+              <li>2. Create a new account or use guest checkout</li>
+              <li>3. Add your items to basket (minimum £15)</li>
+              <li>4. Apply the voucher code</li>
+              <li>5. Enjoy!</li>
+            </ul>
+          </div>
+          
+          <div class="errors-section">
+            <h2>Errors/Fixes:</h2>
+            <p>- Minimum spend not reached: make sure the basket is £15, after any additional discounts</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="/static/script.js"></script>
+  
+  <div class="payment-popup-overlay" id="paymentPopup">
+    <div class="payment-popup">
+      <div class="payment-popup-header">
+        <div class="payment-popup-title">Choose Payment Method</div>
+        <button class="payment-popup-close" id="closePopup">&times;</button>
+      </div>
+      
+      <div class="promo-code-section">
+        <div class="promo-code-input-container">
+          <input type="text" id="promoCode" placeholder="Promo code (optional)" maxlength="20">
+          <button id="applyPromoCode">Apply</button>
+        </div>
+        <div id="promoCodeMessage" class="promo-code-message"></div>
+        <div id="promoDiscount" class="promo-discount"></div>
+      </div>
+      
+      <div class="payment-methods">
+        <button class="payment-method-button" data-payment-method="stripe">
+          <span class="payment-method-name"><img src="/static/images/stripe-logo.svg" alt="Stripe" width="20" height="20" style="vertical-align: middle; margin-right: 8px;"> Stripe</span>
+          <span class="payment-method-arrow">→</span>
+        </button>
+        <button class="payment-method-button" data-payment-method="paypal">
+          <span class="payment-method-name"><img src="/static/images/paypal-logo.svg" alt="PayPal" width="20" height="20" style="vertical-align: middle; margin-right: 8px;"> PayPal</span>
+          <span class="payment-method-arrow">→</span>
+        </button>
+        <button class="payment-method-button" data-payment-method="nowpayments">
+          <span class="payment-method-name"><img src="/static/images/litecoin-logo.svg" alt="NowPayments" width="20" height="20" style="vertical-align: middle; margin-right: 8px;"> Crypto</span>
+          <span class="payment-method-arrow">→</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="email-collection-overlay" id="emailCollectionModal">
+    <div class="email-collection-modal">
+      <div class="email-modal-header">
+        <div class="email-modal-title">Enter Your Email</div>
+        <button class="email-modal-close" id="closeEmailModal">&times;</button>
+      </div>
+      <div class="email-modal-content">
+        <p>Please enter your email address to receive your purchase codes:</p>
+        <input type="email" id="customerEmail" placeholder="your@email.com" required>
+        <div id="emailError" class="email-error"></div>
+        <button id="continueToPayment" class="email-continue-btn">Continue to Payment</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Helper function to get CSRF token from meta tag
+    function getCsrfToken() {
+      const metaTag = document.querySelector('meta[name="csrf-token"]');
+      if (metaTag) {
+        return metaTag.getAttribute('content');
+      }
+      return null;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      // Get the current product ID from the URL
+      const productPath = window.location.pathname;
+      let productId = '';
+      
+      // Try various patterns to extract the product ID
+      let productMatch = productPath.match(/product-([^.]+)\.html/);
+      
+      if (productMatch && productMatch[1]) {
+        productId = productMatch[1];
+      } else {
+        // Try another pattern
+        productMatch = productPath.match(/products\/product-([^.]+)\.html/);
+        if (productMatch && productMatch[1]) {
+          productId = productMatch[1];
+        } else {
+          // Try without the .html
+          productMatch = productPath.match(/product-([^/.]+)/);
+          if (productMatch && productMatch[1]) {
+            productId = productMatch[1];
+          } else {
+            // Fallback to a default ID if we can't extract it
+            productId = '15';
+          }
+        }
+      }
+      
+      console.log('Extracted product ID for stock check:', productId);
+      
+      // Find the stock element
+      const stockElement = document.querySelector('.product-stock');
+      if (!stockElement) {
+        console.warn('No stock element found on product page');
+        return;
+      }
+      
+      // Fetch stock data from API
+      fetch(`/api/stock/${productId}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to fetch stock data');
+          }
+          return response.json();
+        })
+        .then(data => {
+          // Determine colors based on status
+          let textColor, dotColor;
+          
+          if (data.status === 'Out of Stock') {
+            textColor = '#f44336'; // Red
+            dotColor = '#f44336';  // Red dot
+          } else if (data.status === 'Limited Stock') {
+            textColor = '#ff9800'; // Orange 
+            dotColor = '#ff9800';  // Orange dot
+          } else {
+            textColor = '#4CAF50'; // Green
+            dotColor = '#4CAF50';  // Green dot
+          }
+          
+          // Replace the content with inline styled elements for maximum compatibility
+          stockElement.innerHTML = `
+            <span style="display: inline-block; width: 8px; height: 8px; background-color: ${dotColor}; border-radius: 50%; margin-right: 5px;"></span>
+            <span style="color: ${textColor};">${data.status}</span>
+          `;
+        })
+        .catch(error => {
+          console.error('Error fetching stock:', error);
+          stockElement.textContent = 'Check Availability';
+        });
+    });
+  </script>
+
+</body>
+</html>

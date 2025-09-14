@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promo Code Management - eats4u</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+        .form-container { 
+            max-width: 900px; 
+            margin: 20px auto; 
+            padding: 20px; 
+            border: 1px solid #333; 
+            border-radius: 5px;
+            background-color: #222;
+        }
+        h1, h2 { color: #fff; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        select, input[type="text"], input[type="number"], input[type="date"], textarea { 
+            width: 100%; 
+            padding: 8px; 
+            margin-bottom: 15px; 
+            border: 1px solid #333; 
+            border-radius: 4px;
+            background-color: #333;
+            color: #fff;
+        }
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        button { 
+            background-color: #8a6bff; 
+            color: white; 
+            padding: 10px 15px; 
+            border: none; 
+            border-radius: 4px; 
+            cursor: pointer; 
+        }
+        button:hover { background-color: #7559e8; }
+        .message { padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .success { background-color: #4CAF50; color: white; }
+        .error { background-color: #f44336; color: white; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+        th {
+            background-color: #333;
+            color: white;
+        }
+        tr:hover {
+            background-color: #333;
+        }
+        .actions {
+            display: flex;
+            gap: 5px;
+        }
+        .action-btn {
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+        .action-btn.delete {
+            background-color: #f44336;
+        }
+        .action-btn.delete:hover {
+            background-color: #d32f2f;
+        }
+        .status-active {
+            color: #4CAF50;
+        }
+        .status-expired {
+            color: #f44336;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #333;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+        .tab.active {
+            border-color: #8a6bff;
+            font-weight: 500;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="/" class="logo">eats4u</a>
+            <nav>
+                <ul>
+                    <li><a href="/gooner/quick-add">Add Codes</a></li>
+                    <li><a href="/gooner/dashboard">Dashboard</a></li>
+                    <li><a href="/gooner/logout" style="color: #ff5252;">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <div class="container" style="margin-top: 10px; text-align: right;">
+        <span style="color: #aaa; font-size: 14px;">Logged in as: {{ session.username if session.username else 'Admin' }}</span>
+    </div>
+
+    <div class="form-container">
+        <h1>Promo Code Management</h1>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="list">List Promo Codes</div>
+            <div class="tab" data-tab="create">Create New Promo Code</div>
+        </div>
+        
+        <div class="tab-content active" id="list-tab">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Type</th>
+                        <th>Value</th>
+                        <th>Used / Max</th>
+                        <th>Valid Until</th>
+                        <th>Products</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for code, data in promo_codes.items() %}
+                    <tr>
+                        <td>{{ data.code }}</td>
+                        <td>{% if data.discount_type == 'percentage' %}Percentage{% else %}Fixed Amount{% endif %}</td>
+                        <td>
+                            {% if data.discount_type == 'percentage' %}
+                                {{ data.discount_value }}%
+                            {% else %}
+                                £{{ (data.discount_value / 100)|round(2) }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ data.used_count }} / {% if data.max_uses %}{{ data.max_uses }}{% else %}∞{% endif %}
+                        </td>
+                        <td>
+                            {% if data.valid_until %}
+                                {% if data.valid_until < now %}
+                                    <span class="status-expired">{{ data.valid_until.strftime('%Y-%m-%d') }}</span>
+                                {% else %}
+                                    <span class="status-active">{{ data.valid_until.strftime('%Y-%m-%d') }}</span>
+                                {% endif %}
+                            {% else %}
+                                <span class="status-active">No Expiry</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if data.product_ids %}
+                                {{ ', '.join(data.product_ids) }}
+                            {% else %}
+                                All
+                            {% endif %}
+                        </td>
+                        <td class="actions">
+                            <button class="action-btn delete" data-code="{{ data.code }}">Delete</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="tab-content" id="create-tab">
+            <form id="createPromoForm" method="POST" action="/gooner/promo-codes/create">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="code">Promo Code:</label>
+                        <input type="text" id="code" name="code" placeholder="e.g. SUMMER20" required maxlength="20">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="discount_type">Discount Type:</label>
+                        <select id="discount_type" name="discount_type">
+                            <option value="percentage">Percentage</option>
+                            <option value="fixed">Fixed Amount</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="discount_value">Discount Value:</label>
+                        <input type="number" id="discount_value" name="discount_value" min="1" max="100" value="10" required>
+                        <span id="value_label">%</span>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="max_uses">Maximum Uses (0 for unlimited):</label>
+                        <input type="number" id="max_uses" name="max_uses" min="0" value="50">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="valid_until">Valid Until (blank for no expiry):</label>
+                        <input type="date" id="valid_until" name="valid_until">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Apply to Products:</label>
+                    <div style="margin-bottom: 10px;">
+                        <label style="font-weight: normal;">
+                            <input type="radio" name="product_scope" value="all" checked> All Products
+                        </label>
+                        <label style="font-weight: normal; margin-left: 15px;">
+                            <input type="radio" name="product_scope" value="specific"> Specific Products
+                        </label>
+                    </div>
+                    
+                    <div id="product-selector" style="display: none;">
+                        {% for product_id, product in products.items() %}
+                        <label style="font-weight: normal; display: block; margin-bottom: 5px;">
+                            <input type="checkbox" name="products[]" value="{{ product_id }}"> {{ product.name }}
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <button type="submit">Create Promo Code</button>
+            </form>
+            
+            <div id="message"></div>
+        </div>
+    </div>
+    
+    <script>
+        const csrfToken = "{{ csrf_token() }}";
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Set active tab
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Show active content
+                const tabId = this.getAttribute('data-tab');
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(tabId + '-tab').classList.add('active');
+            });
+        });
+        
+        // Handle discount type change
+        const discountTypeSelect = document.getElementById('discount_type');
+        const valueLabel = document.getElementById('value_label');
+        const discountValueInput = document.getElementById('discount_value');
+        
+        discountTypeSelect.addEventListener('change', function() {
+            if (this.value === 'percentage') {
+                valueLabel.textContent = '%';
+                discountValueInput.setAttribute('max', '100');
+                if (discountValueInput.value > 100) {
+                    discountValueInput.value = 100;
+                }
+            } else {
+                valueLabel.textContent = 'pence';
+                discountValueInput.removeAttribute('max');
+            }
+        });
+        
+        // Show/hide product selector
+        document.querySelectorAll('input[name="product_scope"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const productSelector = document.getElementById('product-selector');
+                if (this.value === 'specific') {
+                    productSelector.style.display = 'block';
+                } else {
+                    productSelector.style.display = 'none';
+                }
+            });
+        });
+        
+        // Create promo code form submission
+        document.getElementById('createPromoForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            // Get selected products if specific scope is chosen
+            if (document.querySelector('input[name="product_scope"]:checked').value === 'specific') {
+                const selectedProducts = [];
+                document.querySelectorAll('input[name="products[]"]:checked').forEach(checkbox => {
+                    selectedProducts.push(checkbox.value);
+                });
+                
+                if (selectedProducts.length === 0) {
+                    showMessage('Please select at least one product or choose "All Products"', 'error');
+                    return;
+                }
+            }
+            
+            fetch('/gooner/promo-codes/create', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken
+                },                
+                body: formData
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    showMessage(result.message, 'success');
+                    this.reset();
+                    // Refresh the page after 1.5 seconds
+                    setTimeout(() => { location.reload(); }, 1500);
+                } else {
+                    showMessage('Error: ' + result.error, 'error');
+                }
+            })
+            .catch(error => {
+                showMessage('Error: ' + error.message, 'error');
+            });
+        });
+        
+        // Delete promo code
+        document.querySelectorAll('.action-btn.delete').forEach(button => {
+            button.addEventListener('click', function() {
+                const code = this.getAttribute('data-code');
+                if (confirm(`Are you sure you want to delete promo code ${code}?`)) {
+                    fetch(`/gooner/promo-codes/delete/${code}`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': csrfToken
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.success) {
+                            // Remove row from table
+                            this.closest('tr').remove();
+                            showMessage(result.message, 'success');
+                        } else {
+                            showMessage('Error: ' + result.error, 'error');
+                        }
+                    })
+                    .catch(error => {
+                        showMessage('Error: ' + error.message, 'error');
+                    });
+                }
+            });
+        });
+        
+        function showMessage(text, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = text;
+            messageDiv.className = 'message ' + type;
+            
+            // Clear message after 5 seconds
+            setTimeout(() => {
+                messageDiv.textContent = '';
+                messageDiv.className = '';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

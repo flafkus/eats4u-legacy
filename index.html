@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>eats4u</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Open Graph / Discord Embed Meta Tags -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://eats4u.net/">
+  <meta property="og:title" content="eats4u">
+  <meta property="og:description" content="Get the cheapest and best quality codes!">
+  <meta property="theme-color" content="#8a6bff">
+  <style>
+    /* Add responsive styles for the announcement banner */
+    @media (max-width: 768px) {
+      .announcement-banner .container {
+        text-align: center;
+      }
+      .announcement-banner p {
+        margin: 8px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+        <a href="/" class="logo">eats4u</a>
+      <nav>
+        <ul>
+          <li><a href="/">Products</a></li>
+          <li><a href="/faq">FAQ</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  
+  <section class="announcement-banner">
+    <div class="container">
+      <span class="announcement-emoji">📢</span>
+      <p>Please message our <a href="https://t.me/eats4u_bot" class="support-link" target="_blank">support bot</a> if you have any issues with codes or queries!</p>
+      <p>Also join our <a href="https://t.me/eats4uu" class="telegram-link" target="_blank">Telegram channel</a> for announcements and discount codes!</p>
+    </div>
+  </section>
+
+  <section class="hero">
+    <div class="container">
+      <h1 class="welcome-text">Welcome to eats4u!</h1>
+      <p class="subtitle">We are the cheapest and most reliable seller for discounts. Scroll to find our available products!</p>
+    </div>
+  </section>
+
+  <section class="products">
+    <div class="container">
+      <h2>Products</h2>
+      
+    <div class="product-grid">
+      <a href="/products/product-15" class="product-link" target="_blank">
+        <div class="product-card">
+          <div class="product-image">
+            <img src="/static/images/just-eat.png" alt="£10 off £15">
+          </div>            
+          <h3>Just Eat - £10 off £15</h3>
+          <div class="price-info">
+            <span class="price">£2.00</span>
+            <span class="stock">Checking stock...</span>
+          </div>
+        </div>
+      </a>
+      <a href="/products/product-je-grocery" class="product-link" target="_blank">
+        <div class="product-card">
+          <div class="product-image">
+            <img src="/static/images/just-eat-grocery.png" alt="Just Eat Grocery - £10 off £15">
+          </div>            
+          <h3>Just Eat Grocery - £10 off £15</h3>
+          <div class="price-info">
+            <span class="price">£1.00</span>
+            <span class="stock">Checking stock...</span>
+          </div>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <script src="/static/script.js"></script>
+  <script>
+    // Wait for the page to load
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('Loading stock information...');
+      
+      // Find all product cards
+      const productLinks = document.querySelectorAll('.product-link');
+      
+      // Process each product
+      productLinks.forEach(link => {
+        // Extract product ID from href
+        const href = link.getAttribute('href');
+        if (!href) return;
+        
+        // Extract the product ID
+        let productId = '';
+        if (href.includes('/products/product-')) {
+          productId = href.split('/products/product-').pop().replace('.html', '');
+        } else if (href.startsWith('/products/product-')) {
+          productId = href.substring(9).replace('.html', '');
+        }
+        
+        if (!productId) {
+          console.warn('Could not determine product ID from', href);
+          return;
+        }
+        
+        // Find the stock element in this product card
+        const stockElement = link.querySelector('.stock');
+        if (!stockElement) {
+          console.warn('No stock element found for product', productId);
+          return;
+        }
+        
+        // Fetch stock data from API
+        fetch(`/api/stock/${productId}`)
+          .then(response => response.json())
+          .then(data => {
+            // Determine colors based on status
+            let textColor, dotColor;
+            
+            if (data.status === 'Out of Stock') {
+              textColor = '#f44336'; // Red
+              dotColor = '#f44336';  // Red dot
+            } else if (data.status === 'Limited Stock') {
+              textColor = '#ff9800'; // Orange 
+              dotColor = '#ff9800';  // Orange dot
+            } else {
+              textColor = '#4CAF50'; // Green
+              dotColor = '#4CAF50';  // Green dot
+            }
+            
+            // Replace the content with inline styled elements for maximum compatibility
+            stockElement.innerHTML = `
+              <span style="display: inline-block; width: 8px; height: 8px; background-color: ${dotColor}; border-radius: 50%; margin-right: 5px;"></span>
+              <span style="color: ${textColor};">${data.status}</span>
+            `;
+          })
+          .catch(error => {
+            console.error('Error fetching stock:', error);
+            stockElement.textContent = 'Check Availability';
+          });
+      });
+    });
+  </script>
+  <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+  <script defer src="/_vercel/insights/script.js"></script>
+  <script defer src="/_vercel/speed-insights/script.js"></script>
+</body>
+</html>
